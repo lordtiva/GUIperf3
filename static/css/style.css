@@ -1,0 +1,191 @@
+/* static/css/style.css */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1, h2, h3 {
+    color: #0056b3; /* Azul oscuro */
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Para pantallas pequeñas */
+}
+
+.config-panel, .results-panel {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.config-panel {
+    flex: 1; /* Ocupa 1 parte del espacio */
+    min-width: 350px; /* Ancho mínimo */
+}
+
+.results-panel {
+    flex: 2; /* Ocupa 2 partes del espacio */
+    min-width: 450px;
+}
+
+form fieldset {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+form legend {
+    font-weight: bold;
+    color: #0056b3;
+    padding: 0 5px;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* Estilo para checkboxes y radios */
+form label input[type="checkbox"],
+form label input[type="radio"] {
+    margin-right: 5px;
+}
+/* Hace que el label de checkbox/radio sea clickeable */
+form label input[type="checkbox"] + span,
+form label input[type="radio"] + span {
+    display: inline;
+}
+
+
+form input[type="text"],
+form input[type="number"],
+form input[type="password"], /* Si tuvieras */
+form select {
+    width: calc(100% - 22px); /* Ajustar ancho con padding/border */
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Importante */
+}
+form input[type="number"] {
+     width: 100px; /* Ancho más fijo para números */
+}
+
+
+form small {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.controls {
+    margin-top: 20px;
+    text-align: right;
+}
+
+button {
+    background-color: #007bff; /* Azul primario */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+    margin-left: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#verify-btn {
+    background-color: #6c757d; /* Gris */
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+#verify-btn:hover {
+     background-color: #5a6268;
+}
+
+#verify-status {
+    margin-left: 10px;
+    font-size: 0.9em;
+}
+.status-success { color: green; }
+.status-error { color: red; }
+.status-warning { color: orange; }
+
+.status-bar {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.summary {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+.summary p {
+    margin: 5px 0;
+}
+.summary strong {
+     color: #333;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px; /* Altura fija para el gráfico */
+    width: 100%;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.output-log {
+    margin-top: 20px;
+}
+
+.output-log pre {
+    background-color: #333; /* Fondo oscuro */
+    color: #f0f0f0; /* Texto claro */
+    padding: 15px;
+    border-radius: 4px;
+    max-height: 300px; /* Altura máxima con scroll */
+    overflow-y: auto;
+    white-space: pre-wrap; /* Ajuste de línea */
+    word-wrap: break-word; /* Romper palabras largas */
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+/* Ocultar/Mostrar opciones específicas */
+.hidden {
+    display: none;
+}

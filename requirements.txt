@@ -1,0 +1,7 @@
+Flask
+Flask-Sock
+Flask-Cors
+pywebview
+requests
+gunicorn
+pyinstaller

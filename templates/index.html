@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUIperf3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- O usa un enlace CDN para Chart.js -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script> -->
+</head>
+<body>
+    <h1>Cliente Gráfico GUIperf3</h1>
+
+    <div class="container">
+        <div class="config-panel">
+            <h2>Configuración</h2>
+            <form id="iperf-form">
+                <fieldset>
+                    <legend>Modo</legend>
+                    <label><input type="radio" name="mode" value="client" checked> Cliente</label>
+                    <label><input type="radio" name="mode" value="server"> Servidor</label>
+                </fieldset>
+
+                <fieldset id="client-options">
+                    <legend>Opciones de Cliente</legend>
+                    <div>
+                        <label for="serverAddress">Dirección Servidor:</label>
+                        <input type="text" id="serverAddress" name="serverAddress" value="127.0.0.1" required>
+                    </div>
+                    <div>
+                        <label for="serverPort">Puerto Servidor:</label>
+                        <input type="number" id="serverPort" name="serverPort" value="5201" min="1" max="65535" required>
+                    </div>
+                     <div>
+                        <button type="button" id="verify-btn">Verificar Conexión</button>
+                        <span id="verify-status"></span>
+                    </div>
+                    <div>
+                        <label for="protocol">Protocolo:</label>
+                        <select id="protocol" name="protocol">
+                            <option value="tcp" selected>TCP</option>
+                            <option value="udp">UDP</option>
+                            <option value="sctp">SCTP (si soportado)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="direction">Dirección:</label>
+                        <select id="direction" name="direction">
+                            <option value="upload" selected>Subida (Cliente -> Servidor)</option>
+                            <option value="download">Bajada (Servidor -> Cliente) [-R]</option>
+                            <!-- <option value="bidirectional">Bidireccional [-d]</option> -->
+                        </select>
+                    </div>
+                </fieldset>
+
+                 <fieldset id="server-options" style="display: none;">
+                    <legend>Opciones de Servidor</legend>
+                     <div>
+                        <label for="serverPortServer">Puerto Escucha:</label>
+                        <input type="number" id="serverPortServer" name="serverPortServer" value="5201" min="1" max="65535">
+                     </div>
+                    <label><input type="checkbox" id="oneOff" name="oneOff"> Servir solo un cliente [-1]</label>
+                     <div>
+                        <label for="bindInterfaceServer">Bind a Interfaz/IP:</label>
+                        <input type="text" id="bindInterfaceServer" name="bindInterfaceServer" placeholder="Opcional">
+                     </div>
+                 </fieldset>
+
+                <fieldset>
+                    <legend>Opciones Generales</legend>
+                    <div>
+                        <label for="duration">Duración (segundos):</label>
+                        <input type="number" id="duration" name="duration" value="10" min="1">
+                    </div>
+                     <div>
+                        <label for="reportInterval">Intervalo Reporte (segundos):</label>
+                        <input type="number" id="reportInterval" name="reportInterval" value="1" min="0.1" step="0.1">
+                    </div>
+                     <div>
+                        <label for="dataAmount">Cantidad Datos (Bytes, KB, MB, GB):</label>
+                        <input type="text" id="dataAmount" name="dataAmount" placeholder="Ej: 100M, 1G (Opcional, anula duración)">
+                     </div>
+                     <div>
+                        <label for="bufferSize">Tamaño Buffer/Lectura [-l] (Bytes, KB, MB):</label>
+                        <input type="text" id="bufferSize" name="bufferSize" placeholder="Ej: 128K">
+                     </div>
+                </fieldset>
+
+                <fieldset id="udp-options" style="display: none;">
+                    <legend>Opciones UDP</legend>
+                    <div>
+                        <label for="bandwidth">Ancho de Banda Objetivo [-b]:</label>
+                        <input type="text" id="bandwidth" name="bandwidth" value="1M" required>
+                        <small>(Bits/sec. Ej: 10M, 1G)</small>
+                    </div>
+                    <div>
+                        <label for="ttl">TTL:</label>
+                        <input type="number" id="ttl" name="ttl" min="1" max="255" placeholder="Opcional">
+                    </div>
+                </fieldset>
+
+                <fieldset id="tcp-options">
+                    <legend>Opciones TCP</legend>
+                    <label><input type="checkbox" id="noDelay" name="noDelay"> Deshabilitar Nagle (TCP_NODELAY) [-N]</label>
+                    <div>
+                        <label for="windowSize">Tamaño Ventana TCP [-w] (Bytes, KB, MB):</label>
+                        <input type="text" id="windowSize" name="windowSize" placeholder="Ej: 512K">
+                    </div>
+                    <div>
+                        <label for="mss">Tamaño Máximo Segmento (MSS) [-M]:</label>
+                        <input type="text" id="mss" name="mss" placeholder="Opcional">
+                    </div>
+                     <div>
+                        <label for="congestion">Algoritmo Congestión:</label>
+                        <input type="text" id="congestion" name="congestion" placeholder="Ej: cubic, reno (si soportado)">
+                     </div>
+                </fieldset>
+                 
+                 <fieldset>
+                    <legend>Otras Opciones</legend>
+                     <label><input type="checkbox" id="verbose" name="verbose"> Verbose [-V]</label>
+                     <!-- <label><input type="checkbox" id="forceFlush" name="forceFlush"> Force Flush [--forceflush]</label> -->
+                     <div>
+                        <label for="logFile">Archivo Log:</label>
+                        <input type="text" id="logFile" name="logFile" placeholder="Opcional, ej: test.log">
+                     </div>
+                      <div>
+                        <label for="bindInterfaceClient">Bind a Interfaz/IP (Cliente):</label>
+                        <input type="text" id="bindInterfaceClient" name="bindInterfaceClient" placeholder="Opcional">
+                     </div>
+                 </fieldset>
+
+                <div class="controls">
+                    <button type="submit" id="start-btn">Iniciar Prueba</button>
+                    <button type="button" id="stop-btn" disabled>Detener Prueba</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="results-panel">
+            <h2>Resultados</h2>
+            <div class="status-bar">
+                <strong>Estado:</strong> <span id="status-message">Listo</span>
+            </div>
+            <div class="summary">
+                <h3>Resumen Final</h3>
+                 <p><strong>Ancho de Banda Promedio:</strong> <span id="summary-bandwidth">---</span> Mbps</p>
+                 <p><strong>Transferencia Total:</strong> <span id="summary-transfer">---</span> MB</p>
+                 <p><strong>Duración:</strong> <span id="summary-duration">---</span> s</p>
+                 <p id="summary-jitter-row" style="display: none;"><strong>Jitter Promedio (UDP):</strong> <span id="summary-jitter">---</span> ms</p>
+                 <p id="summary-loss-row" style="display: none;"><strong>Paquetes Perdidos (UDP):</strong> <span id="summary-loss">---</span> %</p>
+            </div>
+             <div class="chart-container">
+                 <canvas id="bandwidthChart"></canvas>
+             </div>
+            <div class="output-log">
+                <h3>Log / Salida Cruda</h3>
+                <pre id="output"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incluir Chart.js localmente -->
+    <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+    <!-- Incluir tu script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

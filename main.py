@@ -45,10 +45,10 @@ def main():
          window = webview.create_window(
              'Cliente Gráfico GUIperf3',  # Título de la ventana
              web_url,                   # URL a cargar
-             width=1000,                 # Ancho inicial
-             height=750,                # Alto inicial
+             width=1280,                 # Ancho inicial
+             height=960,                # Alto inicial
              resizable=True,           # Permitir redimensionar
-             confirm_close=True        # Preguntar antes de cerrar
+             confirm_close=False        # Preguntar antes de cerrar
          )
          
          # Iniciar el bucle de eventos de pywebview (esto bloquea hasta que se cierra la ventana)

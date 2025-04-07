@@ -1,10 +1,18 @@
 /* static/css/style.css */
+html, body {
+    height: 100%; /* Ensure body takes full viewport height */
+    margin: 0; /* Remove default body margin */
+    overflow: hidden; /* Prevent body scrollbar */
+}
+
 body {
     font-family: sans-serif;
-    margin: 0;
+    /* margin: 0; */ /* Removed, handled above */
     padding: 20px;
     background-color: #f4f4f4;
     color: #333;
+    box-sizing: border-box; /* Include padding in height calculation */
+    height: 100vh; /* Use viewport height */
 }
 
 h1, h2, h3 {
@@ -14,7 +22,9 @@ h1, h2, h3 {
 .container {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap; /* Para pantallas pequeñas */
+    flex-wrap: nowrap; /* Prevent wrapping to keep side-by-side */
+    height: calc(100% - 40px); /* Adjust for body padding (20px top + 20px bottom) */
+    overflow: hidden; /* Prevent container itself from scrolling */
 }
 
 .config-panel, .results-panel {
@@ -22,6 +32,9 @@ h1, h2, h3 {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow individual panels to scroll vertically if content overflows */
+    max-height: 100%; /* Limit panel height to container height */
 }
 
 .config-panel {
@@ -156,9 +169,13 @@ button:disabled {
      color: #333;
 }
 
+/* Optional: Adjust fixed/max heights if they still cause issues */
 .chart-container {
     position: relative;
-    height: 300px; /* Altura fija para el gráfico */
+    /* Consider making height relative or smaller if needed */
+    /* height: 30vh; */
+    /* min-height: 200px; */
+    height: 300px; /* Keep original for now */
     width: 100%;
     margin-bottom: 20px;
     background: #fff;
@@ -168,16 +185,14 @@ button:disabled {
     box-sizing: border-box;
 }
 
-.output-log {
-    margin-top: 20px;
-}
-
 .output-log pre {
     background-color: #333; /* Fondo oscuro */
     color: #f0f0f0; /* Texto claro */
     padding: 15px;
     border-radius: 4px;
-    max-height: 300px; /* Altura máxima con scroll */
+    /* Consider making max-height relative or smaller if needed */
+    /* max-height: 25vh; */
+    max-height: 300px; /* Keep original for now */
     overflow-y: auto;
     white-space: pre-wrap; /* Ajuste de línea */
     word-wrap: break-word; /* Romper palabras largas */

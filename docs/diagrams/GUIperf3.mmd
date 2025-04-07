@@ -1,0 +1,27 @@
+flowchart TD
+ subgraph subGraph0["Aplicación Ejecutable (GUIperf3.exe)"]
+        B["backend.py (Flask Server)"]
+        M["main.py"]
+        W["Ventana Nativa (pywebview)"]
+        F["Interfaz Web (HTML/JS/CSS)"]
+        I["Proceso iperf3"]
+        NET[("Test de Red")]
+  end
+    M -- inicia --> B
+    M -- crea --> W
+    W -- carga URL de --> B
+    B -- sirve --> F
+    F -- se ejecuta dentro de --> W
+    B -- ejecuta --> I
+    F -- comunica vía WebSocket --> B
+    F -- comunica vía HTTP --> B
+    I -- realiza --> NET
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style M fill:#fff,stroke:#333,stroke-width:1px
+    style W fill:#cef,stroke:#333,stroke-width:2px
+    style F fill:#ccf,stroke:#333,stroke-width:2px
+    style I fill:#fcf,stroke:#333,stroke-width:2px
+    style NET fill:#eee,stroke:#333,stroke-width:1px
+
+

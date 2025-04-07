@@ -1,0 +1,99 @@
+graph TD
+    %% External components interacting with backend
+    subgraph "Externo: Frontend JS"
+        direction LR
+        FE_JS["Interfaz Web (JS)"]
+    end
+    subgraph "Externo: iperf3"
+        IPERF_PROC["iperf3 Process"]
+    end
+     subgraph "Externo: Sistema Archivos"
+        FS[("File System")]
+     end
+
+    %% Backend Internal Components
+    subgraph "backend.py Internals"
+        direction TB %% Top to Bottom layout inside subgraph
+
+        %% Core Objects
+        FLASK_APP["Flask App ('app')"]
+        SOCK["Flask-Sock ('sock')"]
+        ACTIVE_PROC["active_processes {}"]
+
+        %% Endpoints
+        EP_WS["/iperf (WebSocket Endpoint)"]
+        EP_HTTP_INDEX["/ (HTTP Endpoint)"]
+        EP_HTTP_VERIFY["/verify_connection (HTTP Endpoint)"]
+
+        %% Core Logic Functions
+        F_RUN_IPERF["run_iperf()"]
+        F_GET_PATH["get_iperf3_path()"]
+        F_CLEAN_JSON["clean_json_output()"]
+        F_VERIFY_CONN["verify_connection() (Endpoint Logic)"]
+
+        %% Subprocess Handling
+        SP_POPEN["subprocess.Popen()"]
+        SP_RUN["subprocess.run()"]
+
+        %% Connections: Setup
+        FLASK_APP -->|"defines"| SOCK
+        FLASK_APP -->|"defines route"| EP_WS
+        FLASK_APP -->|"defines route"| EP_HTTP_INDEX
+        FLASK_APP -->|"defines route"| EP_HTTP_VERIFY
+
+        %% Connections: WebSocket Flow (/iperf)
+        EP_WS -->|"on message ('start') spawns thread"| F_RUN_IPERF
+        EP_WS -->|"on message ('stop') terminates"| IPERF_PROC
+        EP_WS -->|"on connect/disconnect manages"| ACTIVE_PROC
+        EP_WS -->|"receives data from"| F_RUN_IPERF
+        F_RUN_IPERF -->|"reads/writes"| ACTIVE_PROC
+
+        %% Connections: run_iperf() Flow
+        F_RUN_IPERF -->|"calls"| F_GET_PATH
+        F_RUN_IPERF -->|"builds cmd"| SP_POPEN
+        F_RUN_IPERF -->|"reads stdout/stderr"| SP_POPEN
+        F_RUN_IPERF -->|"parses JSON, calls"| F_CLEAN_JSON
+        F_RUN_IPERF -->|"sends status/results/errors"| EP_WS
+
+        %% Connections: verify_connection() Flow
+        EP_HTTP_VERIFY -->|"calls internal logic"| F_VERIFY_CONN
+        F_VERIFY_CONN -->|"calls"| F_GET_PATH
+        F_VERIFY_CONN -->|"builds cmd"| SP_RUN
+        F_VERIFY_CONN -->|"reads output/return code"| SP_RUN
+        
+        %% Connections: Utility Functions
+        F_GET_PATH -->|"searches path"| FS
+
+        %% Connections: Subprocess Launch
+        SP_POPEN -->|"launches"| IPERF_PROC
+        SP_RUN -->|"launches"| IPERF_PROC
+
+    end
+
+    %% External Connections
+    FE_JS -->|"WebSocket msgs (start/stop)"| EP_WS
+    EP_WS -->|"WebSocket msgs (status/results/errors)"| FE_JS
+    
+    FE_JS -->|"GET /"| EP_HTTP_INDEX
+    EP_HTTP_INDEX -->|"serves index.html"| FE_JS
+    
+    FE_JS -->|"POST /verify_connection"| EP_HTTP_VERIFY
+    EP_HTTP_VERIFY -->|"JSON status response"| FE_JS
+
+    %% Styling
+    style FLASK_APP fill:#f9f,stroke:#333,stroke-width:2px
+    style SOCK fill:#fcf,stroke:#333,stroke-width:1px
+    style EP_WS fill:#ccf,stroke:#333,stroke-width:2px
+    style EP_HTTP_INDEX fill:#ccf,stroke:#333,stroke-width:1px
+    style EP_HTTP_VERIFY fill:#ccf,stroke:#333,stroke-width:1px
+    style F_RUN_IPERF fill:#ff9,stroke:#333,stroke-width:2px
+    style F_VERIFY_CONN fill:#ff9,stroke:#333,stroke-width:1px
+    style F_GET_PATH fill:#eee,stroke:#333,stroke-width:1px
+    style F_CLEAN_JSON fill:#eee,stroke:#333,stroke-width:1px
+    style SP_POPEN fill:#cfc,stroke:#333,stroke-width:1px
+    style SP_RUN fill:#cfc,stroke:#333,stroke-width:1px
+    style ACTIVE_PROC fill:#eee,stroke:#333,stroke-width:1px
+
+    style IPERF_PROC fill:#fcf,stroke:#333,stroke-width:2px
+    style FE_JS fill:#9cf,stroke:#333,stroke-width:2px
+    style FS fill:#ddd,stroke:#333,stroke-width:1px
